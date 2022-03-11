@@ -1,4 +1,5 @@
 require('dotenv').config();
+
 const request = require('request');
 const express = require('express');
 const cors = require('cors');
@@ -7,6 +8,8 @@ const helmet = require('helmet');
 const morgan = require('morgan');
 const jwt = require('express-jwt');
 const jwksRsa = require('jwks-rsa');
+
+const port = process.env.PORT || 3000;
 
 process.on('unhandledRejection', (reason, p) => {
     console.log('Unhandled Rejection at:', p, 'reason:', reason);
@@ -32,9 +35,8 @@ const checkJwt = jwt({
     algorithms: ['RS256']
 });
 
-const port = process.env.PORT || 3000;
-
 const userRoutes = require('./routes/users');
+const companyRoutes = require('./routes/companies');
 
 app.post('/authorization', async (req, res) => {
     var options = {
@@ -67,6 +69,7 @@ app.post('/authorization', async (req, res) => {
 
 app.use(checkJwt);
 app.use('/users', userRoutes);
+app.use('/companies', companyRoutes);
 
 app.listen(port, () => {
     console.log(`Anchor is listening at http://localhost:${port}`);
